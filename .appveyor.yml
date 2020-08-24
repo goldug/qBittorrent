@@ -26,6 +26,9 @@ cache:
 
 clone_depth: 50
 
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
 install:
   # check if library needs update
   - appveyor DownloadFile "%QBT_VER_URL%" -FileName "c:\version_new" && SET /P newVersion=<"c:\version_new"
@@ -57,3 +60,10 @@ build_script:
   - jom -j2 -f Makefile.Release
 
 test: off
+
+artifacts:
+  - path: build\install
+    name: qBittorrent
+    
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
